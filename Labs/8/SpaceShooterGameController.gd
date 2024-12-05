@@ -5,8 +5,12 @@ var score = 0
 @export var player : Node2D
 @export var spawner : Node2D
 
+@export var highscoreUI : Control
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.WRITE)
+	var baseScores = [0]
+	file.store_var(baseScores)
 	pass # Replace with function body.
 
 
@@ -24,11 +28,20 @@ func game_over():
 	if(player != null):
 		player.queue_free()
 		spawner.queue_free()
-	#for you abitious ones:
-		#what you _SHOULD_ do is also find all the enemies on the screen and free them as well.
-		#FREEEDOM!
 	
-	#do your thing, students..
+	#Project Start
+	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.READ_WRITE)
 	
-	pass
+	var highScores = file.get_var()
 	
+	for savedScore in highScores:
+		if score > savedScore:
+			highscoreUI.visible = true
+			
+	
+
+	
+
+
+func _on_btn_enter_name_pressed() -> void:
+	pass # Replace with function body.
