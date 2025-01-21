@@ -6,11 +6,12 @@ var score = 0
 @export var spawner : Node2D
 
 @export var highscoreUI : Control
+@export var scoresContainer : Control
+
+var iIndex = 0
+var highScores = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.WRITE)
-	var baseScores = [0]
-	file.store_var(baseScores)
 	pass # Replace with function body.
 
 
@@ -30,18 +31,38 @@ func game_over():
 		spawner.queue_free()
 	
 	#Project Start
-	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.READ_WRITE)
+	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.READ)
 	
-	var highScores = file.get_var()
+	highScores = file.get_var()
 	
+	
+	
+	if len(highScores) < 5:
+		highscoreUI.visible = true
+		iIndex = len(highScores) - 1
+		return
+	
+	var itemIndex = 0
 	for savedScore in highScores:
+		itemIndex += 1
 		if score > savedScore:
 			highscoreUI.visible = true
 			
-	
-
-	
-
+			iIndex = itemIndex
 
 func _on_btn_enter_name_pressed() -> void:
-	pass # Replace with function body.
+	if len(highScores) > 5:
+		highScores.renove_at(iIndex)
+		highScores.insert(iIndex, score)
+	else:
+		highScores.append(score)
+	
+	var file = FileAccess.open("res://saveData/highScore.txt", FileAccess.WRITE)
+	file.store_var(highScores)
+	
+	for aScore in highScores:
+		var aScoreLabel = Label.new()
+		
+		aScoreLabel.text = str(aScore)
+		
+		scoresContainer.add_child(aScoreLabel)
